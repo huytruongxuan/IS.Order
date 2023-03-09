@@ -7,15 +7,6 @@
         <UserSecretsId>b389f1b8-8f66-44de-ae78-14aff10adcce</UserSecretsId>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
-
-    <ItemGroup>
-      <Compile Remove="Controllers\HomeController.cs" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Remove="index.html" />
-    </ItemGroup>
-
     <ItemGroup>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.3">
           <PrivateAssets>all</PrivateAssets>
