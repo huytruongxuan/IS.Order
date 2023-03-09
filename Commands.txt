@@ -1,3 +1,4 @@
+https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-on-digitalocean-kubernetes-using-helm
 
 DOCKER IMAGE:
 >docker build -t orderapi:1.1 .
@@ -8,7 +9,7 @@ Run:
 
 Push Image to ACR:
 >az login
->az acr login --name anhtran.azurecr.io
+>az acr login --name anhtran
 Push Image:
 >docker image push anhtran.azurecr.io/orderapi:1.1
 
@@ -29,9 +30,6 @@ Demo and guide for team
   
 -Installing a Package: helm install [release name] [name of chart]
   >helm install orderapi orderapi
-
--Pass values when installing
-  --set name=value
 
 -Upgrading a Release:
   >helm upgrade orderapi orderapi
@@ -59,78 +57,7 @@ Update your helm chart dependencies using helm dependency update:
 
 PUSH CHART TO REMOTE REPO:
 Authenticate with the registry
->helm registry login anhtran.azurecr.io -u anhtran -p FPg+i2c20+fWtBVHoNdVvgH8T3Wc4UxbtHvNehHIOe+ACRBMWOym
+>helm registry login anhtran.azurecr.io -u anhtran
 
 Push chart to registry as OCI artifact
 >helm push orderapi-0.1.0.tgz oci://anhtran.azurecr.io/helm/
-
-List charts in the repository
->az acr repository show --name anhtran --repository helm/orderapi
-
-az acr manifest list-metadata --registry anhtran --name helm/orderapi
-  
-Install your application using your Helm chart using the helm install command.
-
->helm install corewebapp anhtran.azurecr.io/helm/corewebapp
-
-Package chart to local:
-helm package corewebapp .
-
-
-Save package:
-helm chart save corewebapp corewebapp/
-
-helm chart save corewebapp anhtran.azurecr.io/helm/corewebapp
-
-helm chart push corewebapp anhtran.azurecr.io/helm/corewebapp
-
-helm uninstall corewebapp anhtran.azurecr.io/helm/corewebapp
-
-
-REPOSITORIES:
-Add a helm repo:
->helm repo add dev https://example.com/dev-charts
-
-Conenct to Kubernetes:
-az login
-az account set --subscription ca54246d-7eff-4e41-b3df-027db257d2d1
-az aks get-credentials --resource-group anhtran --name anh-aks
-
-
-$ACRName = 'anhtran',
-$ServicePrincipalName = 'anhtran-Service-Principal'
-
-# Obtain the full registry ID for subsequent command args
-$ACR_REGISTRY_ID=$(az acr show --name $ACRName --query id --output tsv)
-
-# Create the service principal with rights to pull scoped to the registry.
-$SP_PASSWD=$(az ad sp create-for-rbac --name $ServicePrincipalName --scopes $ACR_REGISTRY_ID --role acrpull --query password --output tsv)
-$SP_APP_ID=$(az ad sp list --display-name $ServicePrincipalName --query [].appId --output tsv)
-
-# Output the service principal's credentials; use these in your services and
-# applications to authenticate to the container registry.
-Write-Host "Service principal ID: $SP_APP_ID"
-Write-Host "Service principal password: $SP_PASSWD"
-
->>Service principal ID: 328b5134-d655-4cf2-889e-8d4fd32aa001
->>Service principal password: xOs8Q~5yvGDjZVQIFZpqNS2RK0AfhXjbs6a~ZcA9
-
-kubectl create secret docker-registry acr-secret
-    --namespace default \
-    --docker-server=anhtran.azurecr.io \
-    --docker-username=328b5134-d655-4cf2-889e-8d4fd32aa001 \
-    --docker-password=xOs8Q~5yvGDjZVQIFZpqNS2RK0AfhXjbs6a~ZcA9
-    
-  
-SECURING THE INGRESS USING CERT-MANAGER:
->kubectl create namespace cert-manager
-
-add the Jetstack Helm repository to Helm
->helm repo add jetstack https://charts.jetstack.io
->helm repo update
-
-install Cert-Manager into the cert-manager namespace
->helm install cert-manager jetstack/cert-manager --namespace cert-manager --version v1.10.1 --set installCRDs=true
-
-Check status
->kubectl describe certificate hello-kubernetes-tls
