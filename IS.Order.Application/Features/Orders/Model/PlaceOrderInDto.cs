@@ -1,6 +1,6 @@
 namespace IS.Order.Application.Features.Orders;
 
-public class OrderPlacementRequestDto
+public class PlaceOrderInDto
 {
     public Guid RequestId { get; set; }
     public string? OrderNumber { get; set; }

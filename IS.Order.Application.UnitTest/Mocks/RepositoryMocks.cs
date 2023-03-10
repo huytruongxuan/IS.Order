@@ -1,3 +1,4 @@
+using IS.Order.Application.Contracts.DataAccess;
 using IS.Order.Application.Contracts.Persistence;
 using Moq;
 
@@ -5,7 +6,7 @@ namespace IS.Order.Application.UnitTest.Mocks;
 
 public class RepositoryMocks
 {
-    public static Mock<IOrderRepository> GetOrderRepository()
+    public static Mock<IOrderDataAccess> GetOrderDataAccess()
     {
         var guid = Guid.Parse("{B0788D2F-8003-43C1-92A4-EDC76A7C5DDE}");
 
@@ -22,7 +23,11 @@ public class RepositoryMocks
         var mockOrderRepository = new Mock<IOrderRepository>();
         mockOrderRepository.Setup(repo => repo.AddAsync(It.IsAny<Domain.Entities.Order>()))
             .ReturnsAsync(() => orderSample);
+        
+        var mockOrderDataAccess = new Mock<IOrderDataAccess>();
+        mockOrderDataAccess.Setup(dataAccess => dataAccess.OrderRepository)
+            .Returns(mockOrderRepository.Object);
 
-        return mockOrderRepository;
+        return mockOrderDataAccess;
     }
 }

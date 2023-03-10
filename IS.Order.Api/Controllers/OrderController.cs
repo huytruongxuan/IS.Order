@@ -22,7 +22,7 @@ public class OrderController : ControllerBase
     }
     
     [HttpPost]
-    public async Task<String> PlaceOrder(OrderPlacementRequestDto request)
+    public async Task<String> PlaceOrder(PlaceOrderInDto request)
     {
         await _orderService.CreateOrderAsync(request, CancellationToken.None);
         return "done";

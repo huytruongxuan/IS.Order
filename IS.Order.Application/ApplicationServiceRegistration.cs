@@ -1,6 +1,7 @@
 using System.Reflection;
 using IS.Order.Application.Contracts;
 using IS.Order.Application.Features.Orders;
+using IS.Order.Application.Features.Orders.Processor;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace IS.Order.Application;
@@ -15,6 +16,7 @@ public static class ApplicationServiceRegistration
         });
         
         services.AddScoped<IOrderService, OrderService>();
+        services.AddScoped<IOrderProcessor, DefaultOrderServiceProcessor>();
 
         return services;
     }

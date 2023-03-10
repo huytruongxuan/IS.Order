@@ -1,7 +1,9 @@
 using AutoMapper;
 using Bogus;
+using IS.Order.Application.Contracts.DataAccess;
 using IS.Order.Application.Contracts.Persistence;
 using IS.Order.Application.Features.Orders;
+using IS.Order.Application.Features.Orders.Processor;
 using IS.Order.Application.Profiles;
 using IS.Order.Application.UnitTest.Mocks;
 using Moq;
@@ -13,11 +15,11 @@ namespace IS.Order.Application.UnitTest.Features.Orders;
 public class OrderServiceTests
 {
     private readonly IMapper _mapper;
-    private readonly Mock<IOrderRepository> _mockOrderRepository;
+    private readonly Mock<IOrderDataAccess> _mockOrderDataAccess;
 
     public OrderServiceTests()
     {
-        _mockOrderRepository = RepositoryMocks.GetOrderRepository();
+        _mockOrderDataAccess = RepositoryMocks.GetOrderDataAccess();
         var configurationProvider = new MapperConfiguration(cfg => { cfg.AddProfile<MappingProfile>(); });
 
         _mapper = configurationProvider.CreateMapper();
@@ -26,7 +28,8 @@ public class OrderServiceTests
     [Fact]
     public async Task PlaceOrderTest_Success()
     {
-        var service = new OrderService(_mapper, _mockOrderRepository.Object);
+        var processor = new DefaultOrderServiceProcessor(_mapper, _mockOrderDataAccess.Object);
+        var service = new OrderService(_mapper, _mockOrderDataAccess.Object, processor);
 
         // var orderRequest = new OrderPlacementRequestDto
         // {
@@ -45,9 +48,10 @@ public class OrderServiceTests
     [Fact]
     public async Task PlaceOrderTest_Fail_InsufficientAmount()
     {
-        var service = new OrderService(_mapper, _mockOrderRepository.Object);
+        var processor = new DefaultOrderServiceProcessor(_mapper, _mockOrderDataAccess.Object);
+        var service = new OrderService(_mapper, _mockOrderDataAccess.Object, processor);
 
-        var orderRequest = new OrderPlacementRequestDto
+        var orderRequest = new PlaceOrderInDto
         {
             CustomerId = "1121",
             OrderDate = DateTime.Now.Add(TimeSpan.FromDays(1)),
@@ -61,12 +65,12 @@ public class OrderServiceTests
         ex.ValidationErrors[0].ShouldBe("Amount must be greater than 0.");
     }
     
-    public Task<OrderPlacementRequestDto> FakeData(int orderId)
+    public Task<PlaceOrderInDto> FakeData(int orderId)
     {
         var customerIds = new[] { "999C010845", "999C011128", "999C011131", "999C000008", "999C000099" };
         var fundIds = new[] { 1111111, 1111112, 1111113, 1111114, 1111115 };
 
-        var orderRequest = new Faker<OrderPlacementRequestDto>()
+        var orderRequest = new Faker<PlaceOrderInDto>()
             // //Ensure all properties have rules. By default, StrictMode is false
             // //Set a global policy by using Faker.DefaultStrictMode
             // .StrictMode(true)
@@ -80,6 +84,6 @@ public class OrderServiceTests
             .RuleFor(o => o.FundId, f => f.PickRandom(fundIds))
             //OrderNumber is deterministic
             .RuleFor(o => o.OrderNumber, f => DateTime.Now.ToString("yyyyMMdd") + (orderId++).ToString("D6"));
-        return Task.FromResult<OrderPlacementRequestDto>(orderRequest);
+        return Task.FromResult<PlaceOrderInDto>(orderRequest);
     }
 }

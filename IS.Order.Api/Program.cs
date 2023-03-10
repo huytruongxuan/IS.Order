@@ -1,5 +1,6 @@
 using IS.Order.Api.Middleware;
 using IS.Order.Application;
+using IS.Order.DataAccess;
 using IS.Order.Persistence;
 using Serilog;
 
@@ -11,6 +12,12 @@ Log.Information("Investment-Service Order.API starting");
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add .Net User Secrets in case of development
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddUserSecrets<Program>();
+}
+
 // Configure Serilog
 builder.Host.UseSerilog((context, loggerConfiguration) => loggerConfiguration
     .ReadFrom.Configuration(context.Configuration)
@@ -20,6 +27,7 @@ builder.Host.UseSerilog((context, loggerConfiguration) => loggerConfiguration
 builder.Services.AddApplicationServices();
 builder.Services.AddPersistenceServices(builder.Configuration);
 builder.Services.AddDbContext<ApplicationDbContext>();
+builder.Services.AddDataAccessServices();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
