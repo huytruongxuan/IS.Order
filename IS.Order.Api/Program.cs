@@ -62,6 +62,7 @@ builder.Services.AddSwaggerGen(options =>
             Type = ReferenceType.SecurityScheme
         }
     };
+builder.Services.AddHealthChecks();
 
     options.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -84,6 +85,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseCustomExceptionHandler();
 app.MapControllers();
+
+app.MapHealthChecks("/");
 
 app.Run();
 

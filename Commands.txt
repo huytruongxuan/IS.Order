@@ -1,0 +1,63 @@
+https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-on-digitalocean-kubernetes-using-helm
+
+DOCKER IMAGE:
+>docker build -t orderapi:1.1 .
+Tag Image:
+>docker tag orderapi:1.1  anhtran.azurecr.io/orderapi:1.1
+Run:
+>docker run -d -p 6004:80 --name orderapi orderapi:1.1
+
+Push Image to ACR:
+>az login
+>az acr login --name anhtran
+Push Image:
+>docker image push anhtran.azurecr.io/orderapi:1.1
+
+Push pull:
+>docker pull anhtran.azurecr.io/orderapi:1.0
+
+HELM: 
+Deploy it on Docker Desktop (Kubernetes mode)
+Demo and guide for team
+1. Add helm configuration for IS.Order.API
+  >cd to IS.Order.Application/
+  >mkdir charts and cd charts
+-Create your Helm chart:
+  >helm create orderapi
+  
+-Package the chart:
+  >helm package orderapi
+  
+-Installing a Package: helm install [release name] [name of chart]
+  >helm install orderapi orderapi
+
+-Upgrading a Release:
+  >helm upgrade orderapi orderapi
+
+-Roll back to a previous release using helm rollback [RELEASE] [REVISION].
+  >helm rollback orderapi 1
+
+Uninstall:
+  >helm uninstall orderapi
+
+See revision of release
+>helm history [RELEASE]
+
+View Values:
+>helm get values orderapi
+
+View status
+>helm status
+
+View chart:
+>helm show values [chart name]
+
+Update your helm chart dependencies using helm dependency update:
+>helm dependency update orderapi
+
+PUSH CHART TO REMOTE REPO:
+Authenticate with the registry
+>helm registry login anhtran.azurecr.io -u anhtran
+
+Push chart to registry as OCI artifact
+>helm push orderapi-0.1.0.tgz oci://anhtran.azurecr.io/helm/
