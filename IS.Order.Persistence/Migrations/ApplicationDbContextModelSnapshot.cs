@@ -29,7 +29,8 @@ namespace IS.Order.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(30, 6)
+                        .HasColumnType("decimal(30,6)");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");

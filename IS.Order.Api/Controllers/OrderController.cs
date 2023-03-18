@@ -1,6 +1,8 @@
 using IS.Order.Application.Contracts;
 using IS.Order.Application.Features.Orders;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace IS.Order.Api.Controllers;
 
@@ -9,20 +11,21 @@ namespace IS.Order.Api.Controllers;
 public class OrderController : ControllerBase
 {
     private readonly IOrderService _orderService;
-    
+
     public OrderController(IOrderService orderService)
     {
         _orderService = orderService;
     }
 
-   [HttpGet]
-    public async Task<IActionResult> GetByGuid(Guid guid){
+    [HttpGet]
+    public async Task<IActionResult> GetByGuid(Guid guid)
+    {
         var order = await _orderService.GetByGuid(guid);
-        return order != null ? Ok(order): BadRequest();
+        return order != null ? Ok(order) : BadRequest();
     }
-    
+
     [HttpPost]
-    public async Task<String> PlaceOrder(OrderPlacementRequestDto request)
+    public async Task<String> PlaceOrder(PlaceOrderInDto request)
     {
         await _orderService.CreateOrderAsync(request, CancellationToken.None);
         return "done";
@@ -39,5 +42,25 @@ public class OrderController : ControllerBase
             return NoContent();
         }
         else return NotFound();
+    }
+
+    //Todo: to be removed
+    [HttpGet("user/claims")]
+    [Authorize]
+    public IActionResult GetUserClaims()
+    {
+        var claimsIdentity = HttpContext.User.Identity as ClaimsIdentity;
+
+        if (claimsIdentity != null)
+        {
+            return Ok(new
+            {
+                ClientId = claimsIdentity.FindFirst("client_id")?.Value,
+                Scopes = claimsIdentity.FindAll(c => c.Type == "scope").Select(c => c.Value),
+
+            });
+        }
+
+        return Ok(Enumerable.Empty<object>());
     }
 }

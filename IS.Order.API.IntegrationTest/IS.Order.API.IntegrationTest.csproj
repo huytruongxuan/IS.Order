@@ -9,7 +9,7 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.14" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.3" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.14" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
         <PackageReference Include="Moq" Version="4.18.4" />
         <PackageReference Include="Shouldly" Version="4.1.0" />
@@ -26,8 +26,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\IS.Order.Api\IS.Order.Api.csproj" />
-      <ProjectReference Include="..\IS.Order.Application\IS.Order.Application.csproj" />
-      <ProjectReference Include="..\IS.Order.Persistence\IS.Order.Persistence.csproj" />
     </ItemGroup>
 
 </Project>

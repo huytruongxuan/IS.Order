@@ -1,6 +1,4 @@
-﻿using IS.Order.Api.Middleware;
-
-namespace IS.Order.Api.Middleware;
+﻿namespace IS.Order.Api.Middleware;
 
 public static class MiddlewareExtensions
 {

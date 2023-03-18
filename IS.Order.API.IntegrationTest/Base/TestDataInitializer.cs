@@ -1,7 +1,4 @@
-﻿
-using System;
-using IS.Order.Domain.Entities;
-using IS.Order.Persistence;
+﻿using IS.Order.Persistence;
 
 namespace IS.Order.API.IntegrationTest.Base;
 

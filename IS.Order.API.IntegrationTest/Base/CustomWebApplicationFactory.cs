@@ -6,7 +6,6 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Serilog;
 
 namespace IS.Order.API.IntegrationTest.Base;
@@ -40,6 +39,7 @@ public class CustomWebApplicationFactory<TStartup>
                 var context = scopedServices.GetRequiredService<ApplicationDbContext>();
                 var logger = scopedServices.GetRequiredService<ILogger<CustomWebApplicationFactory<TStartup>>>();
 
+                context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
 
                 try
@@ -51,9 +51,7 @@ public class CustomWebApplicationFactory<TStartup>
                     logger.LogError(ex,
                         $"An error occurred seeding the database with test messages. Error: {ex.Message}");
                 }
-            }
-
-            ;
+            };
         });
     }
 

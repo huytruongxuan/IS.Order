@@ -7,7 +7,7 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<Domain.Entities.Order, OrderPlacementRequestDto>()
+        CreateMap<Domain.Entities.Order, PlaceOrderInDto>()
             .ReverseMap();
     }
 }

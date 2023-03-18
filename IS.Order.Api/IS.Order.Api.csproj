@@ -8,7 +8,8 @@
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.3">
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.14" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.14">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -24,6 +25,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\IS.Order.Application\IS.Order.Application.csproj" />
+      <ProjectReference Include="..\IS.Order.DataAccess\IS.Order.DataAccess.csproj" />
       <ProjectReference Include="..\IS.Order.Persistence\IS.Order.Persistence.csproj" />
     </ItemGroup>
 

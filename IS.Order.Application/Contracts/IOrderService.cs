@@ -6,7 +6,7 @@ public interface IOrderService
 {
     Task<IReadOnlyList<Domain.Entities.Order>> GetAllOrders();
 
-    Task<Guid> CreateOrderAsync(OrderPlacementRequestDto orderPlacementRequestDto,
+    Task<Guid> CreateOrderAsync(PlaceOrderInDto placeOrderInDto,
         CancellationToken cancellationToken);
 
     Task<Domain.Entities.Order> GetByGuid(Guid guid);

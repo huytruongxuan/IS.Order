@@ -1,43 +1,42 @@
 using AutoMapper;
 using IS.Order.Application.Contracts;
+using IS.Order.Application.Contracts.DataAccess;
 using IS.Order.Application.Contracts.Persistence;
+using IS.Order.Application.Features.Orders.Processor;
 using IS.Order.Application.Features.Orders.Validator;
 
 namespace IS.Order.Application.Features.Orders;
 
 public class OrderService : IOrderService
 {
-    private readonly IOrderRepository _orderRepository;
+    private readonly IOrderDataAccess _orderDataAccess;
     private readonly IMapper _mapper;
+    private readonly IOrderProcessor _orderProcessor;
     
-    public OrderService(IMapper mapper, IOrderRepository orderRepository)
+    public OrderService(IMapper mapper, IOrderDataAccess orderDataAccess, IOrderProcessor orderProcessor)
     {
         _mapper = mapper;
-        _orderRepository = orderRepository;
+        _orderDataAccess = orderDataAccess;
+        _orderProcessor = orderProcessor;
     }
+  
 
     public async Task<Domain.Entities.Order> GetByGuid(Guid guid){
-       return await _orderRepository.GetByIdAsync(guid);
+       return await _orderDataAccess.OrderRepository.GetByIdAsync(guid);
     }
     
-    public async Task<Guid> CreateOrderAsync(OrderPlacementRequestDto orderPlacementRequestDto, CancellationToken cancellationToken)
+    public async Task<Guid> CreateOrderAsync(PlaceOrderInDto placeOrderInDto, CancellationToken cancellationToken)
     {
-        var @order = _mapper.Map<Domain.Entities.Order>(orderPlacementRequestDto);
-
-        var validation = new OrderPlacementRequestValidator(_orderRepository);
-        var validationResult = await validation.ValidateAsync(@order, cancellationToken);
-        if (validationResult.Errors.Count > 0)
-        {
-            throw new Exceptions.ValidationException(validationResult);
-        }
-
-        @order = await _orderRepository.AddAsync(@order);
-        return @order.Id;
+        var order = await _orderProcessor.ProcessNewOrder(placeOrderInDto, cancellationToken);
+            
+        _orderDataAccess.SaveChanges();
+        
+        return order.Id;
     }
 
     public Task RemoveOrder(Domain.Entities.Order order)
-        =>  _orderRepository.DeleteAsync(order);
+        =>  _orderDataAccess.OrderRepository.DeleteAsync(order);
 
     public Task<IReadOnlyList<Domain.Entities.Order>> GetAllOrders()
-        => _orderRepository.ListAllAsync();
+        => _orderDataAccess.OrderRepository.ListAllAsync();
 }
